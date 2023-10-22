@@ -84,6 +84,7 @@ cmake/.idea
 cmake/cmake-build-debug/
 .build/
 _build/
+build/
 .vs
 .idea/
 
