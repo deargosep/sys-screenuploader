@@ -4,11 +4,8 @@
 #include <switch.h>
 #include <map>
 
-using namespace std;
-
-
-const string URLplaceholder = "<destid>";
-const string defaultUrl = "https://screenuploader.bakatrouble.me/upload/" + URLplaceholder + "/";
+const std::string URLplaceholder = "<destid>";
+const std::string defaultUrl = "https://screenuploader.bakatrouble.me/upload/" + URLplaceholder + "/";
 
 class Config {
 public:
@@ -19,21 +16,21 @@ public:
 
     bool refresh();
 
-    string getUrl(string &tid);
-    string getUrlParams();
-    bool uploadAllowed(string &tid, bool isMovie);
+    std::string getUrl(std::string &tid);
+    std::string getUrlParams();
+    bool uploadAllowed(std::string &tid, bool isMovie);
     bool keepLogs();
 
     bool error;
 
 private:
-    string m_url;
-    string m_defaultDestID;
+    std::string m_url;
+    std::string m_defaultDestID;
     bool m_uploadScreenshots;
     bool m_uploadMovies;
     bool m_keepLogs;
-    map<string, string> m_titleSettings;
-    map<string, bool> m_titleScreenshots;
-    map<string, bool> m_titleMovies;
-    map<string, string> m_urlParams;
+    std::map<std::string, std::string> m_titleSettings;
+    std::map<std::string, bool> m_titleScreenshots;
+    std::map<std::string, bool> m_titleMovies;
+    std::map<std::string, std::string> m_urlParams;
 };

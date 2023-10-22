@@ -4,9 +4,6 @@
 #include <fstream>
 #include <ctime>
 
-using namespace std;
-
-
 enum LogLevel {
     DEBUG = 0,
     INFO = 1,
@@ -14,7 +11,7 @@ enum LogLevel {
     NONE = 10,
 };
 
-const string LOGFILE_PATH = "sdmc:/config/sys-screenuploader/screenuploader.log";
+const std::string LOGFILE_PATH = "sdmc:/config/sys-screenuploader/screenuploader.log";
 
 class Logger {
 public:
@@ -25,7 +22,7 @@ public:
 
     void truncate() {
         close();
-        m_file.open(LOGFILE_PATH, ios::trunc);
+        m_file.open(LOGFILE_PATH, std::ios::trunc);
         close();
     }
 
@@ -35,7 +32,7 @@ public:
 
     void open() {
         if (!m_file.is_open()) {
-            m_file.open(LOGFILE_PATH, ios::app);
+            m_file.open(LOGFILE_PATH, std::ios::app);
         }
     }
 
@@ -49,44 +46,44 @@ public:
         return level >= m_level;
     }
 
-    ostream &debug() {
+    std::ostream &debug() {
         if (isEnabled(DEBUG)) {
             open();
             m_file << getPrefix(DEBUG);
             return m_file;
         }
-        return cout;
+        return std::cout;
     }
 
-    ostream &info() {
+    std::ostream &info() {
         if (isEnabled(INFO)) {
             open();
             m_file << getPrefix(INFO);
             return m_file;
         }
-        return cout;
+        return std::cout;
     }
 
-    ostream &error() {
+    std::ostream &error() {
         if (isEnabled(ERROR)) {
             open();
             m_file << getPrefix(ERROR);
             return m_file;
         }
-        return cout;
+        return std::cout;
     }
 
-    ostream &none() {
+    std::ostream &none() {
         if (isEnabled(NONE)) {
             open();
             m_file << getPrefix(NONE);
             return m_file;
         }
-        return cout;
+        return std::cout;
     }
 
 private:
-    static string get_time() {
+    static std::string get_time() {
         u64 now;
         timeGetCurrentTime(TimeType_LocalSystemClock, &now);
         time_t nowt = now;
@@ -95,8 +92,8 @@ private:
         return buf;
     }
 
-    static string getPrefix(LogLevel lvl) {
-        string prefix;
+    static std::string getPrefix(LogLevel lvl) {
+        std::string prefix;
         switch(lvl) {
             case DEBUG:
                 prefix = "[DEBUG] "; break;
@@ -110,6 +107,6 @@ private:
         return prefix + "[" + get_time() + "] ";
     }
 
-    ofstream m_file;
+    std::ofstream m_file;
     LogLevel m_level = INFO;
 };

@@ -7,17 +7,17 @@
 
 #include "utils.hpp"
 
-string getAlbumPath() {
+std::string getAlbumPath() {
     return "img:/";
 }
 
-bool isDigitsOnly(const string &str) {
-    return str.find_first_not_of("0123456789") == string::npos;
+bool isDigitsOnly(const std::string &str) {
+    return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-string getLastAlbumItem() {
-    vector<string> years, months, days, files;
-    string albumPath = getAlbumPath();
+std::string getLastAlbumItem() {
+    std::vector<std::string> years, months, days, files;
+    std::string albumPath = getAlbumPath();
     if (!fs::is_directory(albumPath)) return "<No album directory: " + albumPath + ">";
 
     for (auto &entry : fs::directory_iterator(albumPath))
@@ -47,20 +47,20 @@ string getLastAlbumItem() {
     return files.back();
 }
 
-size_t filesize(string &path) {
-    streampos begin, end;
-    ifstream f(path, ios::binary);
+size_t filesize(std::string &path) {
+    std::streampos begin, end;
+    std::ifstream f(path, std::ios::binary);
     begin = f.tellg();
-    f.seekg(0, ios::end);
+    f.seekg(0, std::ios::end);
     end = f.tellg();
     f.close();
     return end - begin;
 }
 
-string url_encode(const string &value) {
-    ostringstream escaped;
+std::string url_encode(const std::string &value) {
+    std::ostringstream escaped;
     escaped.fill('0');
-    escaped << hex;
+    escaped << std::hex;
 
     for (char c : value) {
         // Keep alphanumeric and other accepted characters intact
@@ -70,9 +70,9 @@ string url_encode(const string &value) {
         }
 
         // Any other characters are percent-encoded
-        escaped << uppercase;
-        escaped << '%' << setw(2) << int((unsigned char) c);
-        escaped << nouppercase;
+        escaped << std::uppercase;
+        escaped << '%' << std::setw(2) << int((unsigned char) c);
+        escaped << std::nouppercase;
     }
 
     return escaped.str();

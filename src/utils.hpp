@@ -3,10 +3,9 @@
 #include <filesystem>
 #include "config.hpp"
 
-using namespace std;
-namespace fs = filesystem;
+namespace fs = std::filesystem;
 
 
-string getLastAlbumItem();
-size_t filesize(string &path);
-string url_encode(const string &value);
+std::string getLastAlbumItem();
+size_t filesize(std::string &path);
+std::string url_encode(const std::string &value);

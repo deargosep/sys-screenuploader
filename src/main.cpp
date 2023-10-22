@@ -8,8 +8,6 @@
 #include "logger.hpp"
 #include "project.h"
 
-using namespace std;
-
 #define INNER_HEAP_SIZE 0x50000
 
 extern "C" {
@@ -114,10 +112,10 @@ void initLogger(bool truncate) {
     if (truncate)
         Logger::get().get().truncate();
 
-    Logger::get().none() << "=============================" << endl;
-    Logger::get().none() << "=============================" << endl;
-    Logger::get().none() << "=============================" << endl;
-    Logger::get().none() << "ScreenUploader v" << APP_VERSION << " is starting..." << endl;
+    Logger::get().none() << "=============================" << std::endl;
+    Logger::get().none() << "=============================" << std::endl;
+    Logger::get().none() << "=============================" << std::endl;
+    Logger::get().none() << "ScreenUploader v" << APP_VERSION << " is starting..." << std::endl;
 }
 
 #pragma clang diagnostic push
@@ -139,23 +137,23 @@ int main(int argc, char **argv) {
     FsFileSystem imageFs;
     rc = capsaGetAutoSavingStorage(&storage);
     if (!R_SUCCEEDED(rc)) {
-        Logger::get().error() << "capsaGetAutoSavingStorage() failed: " << rc << ", exiting..." << endl;
+        Logger::get().error() << "capsaGetAutoSavingStorage() failed: " << rc << ", exiting..." << std::endl;
         return 0;
     }
     rc = fsOpenImageDirectoryFileSystem(&imageFs, (FsImageDirectoryId)storage);
     if (!R_SUCCEEDED(rc)) {
-        Logger::get().error() << "fsOpenImageDirectoryFileSystem() failed: " << rc << ", exiting..." << endl;
+        Logger::get().error() << "fsOpenImageDirectoryFileSystem() failed: " << rc << ", exiting..." << std::endl;
         return 0;
     }
     int mountRes = fsdevMountDevice("img", imageFs);
     if (mountRes < 0) {
-        Logger::get().error() << "fsdevMountDevice() failed, exiting..." << endl;
+        Logger::get().error() << "fsdevMountDevice() failed, exiting..." << std::endl;
         return 0;
     }
-    Logger::get().info() << "Mounted " << (storage ? "SD" : "NAND") << " storage" << endl;
+    Logger::get().info() << "Mounted " << (storage ? "SD" : "NAND") << " storage" << std::endl;
 
-    string tmpItem, lastItem = getLastAlbumItem();
-    Logger::get().info() << "Current last item: " << lastItem << endl;
+    std::string tmpItem, lastItem = getLastAlbumItem();
+    Logger::get().info() << "Current last item: " << lastItem << std::endl;
     Logger::get().close();
 
     size_t fs;
@@ -164,9 +162,9 @@ int main(int argc, char **argv) {
         if (lastItem.compare(tmpItem) < 0) {
             fs = filesize(tmpItem);
             if (fs > 0) {
-                Logger::get().info() << "=============================" << endl;
-                Logger::get().info() << "New item found: " << tmpItem << endl;
-                Logger::get().info() << "Filesize: " << fs << endl;
+                Logger::get().info() << "=============================" << std::endl;
+                Logger::get().info() << "New item found: " << tmpItem << std::endl;
+                Logger::get().info() << "Filesize: " << fs << std::endl;
                 bool sent = false;
                 for (int i=0; i<3; i++) {
                     sent = sendFileToServer(tmpItem, fs);
@@ -175,7 +173,7 @@ int main(int argc, char **argv) {
                 }
                 lastItem = tmpItem;
                 if (!sent)
-                    Logger::get().error() << "Unable to send file after 3 retries" << endl;
+                    Logger::get().error() << "Unable to send file after 3 retries" << std::endl;
             }
 
             Logger::get().close();

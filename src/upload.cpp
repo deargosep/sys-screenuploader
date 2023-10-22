@@ -6,7 +6,7 @@
 #include "config.hpp"
 #include "logger.hpp"
 
-namespace fs = filesystem;
+namespace fs = std::filesystem;
 
 struct upload_info {
     FILE *f;
@@ -20,7 +20,7 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *da
         return 0;
 
     if (ui->sizeLeft) {
-        size_t bytes = min(ui->sizeLeft, maxBytes);
+        size_t bytes = std::min(ui->sizeLeft, maxBytes);
         size_t bytesRead = fread(ptr, (size_t)1, bytes, ui->f);
         ui->sizeLeft -= bytesRead;
         return bytes;
@@ -29,11 +29,11 @@ static size_t _uploadReadFunction(void *ptr, size_t size, size_t nmemb, void *da
     return 0;
 }
 
-bool sendFileToServer(string &path, size_t size) {
-    string tid = path.substr(path.length() - 36, 32);
-    Logger::get().debug() << "Title ID: " << tid << endl;
+bool sendFileToServer(std::string &path, size_t size) {
+    std::string tid = path.substr(path.length() - 36, 32);
+    Logger::get().debug() << "Title ID: " << tid << std::endl;
     if (!Config::get().uploadAllowed(tid, path.back() == '4')) {
-        Logger::get().info() << "Not uploading" << endl;
+        Logger::get().info() << "Not uploading" << std::endl;
         return true;
     }
 
@@ -42,7 +42,7 @@ bool sendFileToServer(string &path, size_t size) {
     FILE *f = fopen(path.c_str(), "rb");
 
     if (f == nullptr) {
-        Logger::get().error() << "fopen() failed" << endl;
+        Logger::get().error() << "fopen() failed" << std::endl;
         return false;
     }
 
@@ -50,9 +50,9 @@ bool sendFileToServer(string &path, size_t size) {
 
     CURL *curl = curl_easy_init();
     if (curl) {
-        stringstream url;
+        std::stringstream url;
         url << Config::get().getUrl(tid) << "?filename=" << fpath.filename().string() << Config::get().getUrlParams() ;
-        Logger::get().debug() << "Upload URL: " << url.str() << endl;
+        Logger::get().debug() << "Upload URL: " << url.str() << std::endl;
         curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         struct curl_slist *chunk = nullptr;
@@ -76,17 +76,17 @@ bool sendFileToServer(string &path, size_t size) {
             double requestSize;
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
             curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD, &requestSize);
-            Logger::get().debug() << requestSize << " bytes sent, response code: " << responseCode << endl;
+            Logger::get().debug() << requestSize << " bytes sent, response code: " << responseCode << std::endl;
             curl_slist_free_all(chunk);
             curl_easy_cleanup(curl);
             return responseCode == 200;
         } else {
-            Logger::get().error() << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
+            Logger::get().error() << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
             curl_slist_free_all(chunk);
             curl_easy_cleanup(curl);
             return false;
         }
     }
-    Logger::get().error() << "curl_easy_init() failed" << endl;
+    Logger::get().error() << "curl_easy_init() failed" << std::endl;
     return false;
 }
