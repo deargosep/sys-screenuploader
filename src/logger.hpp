@@ -4,11 +4,11 @@
 #include <fstream>
 #include <ctime>
 
-enum LogLevel {
-    DEBUG = 0,
-    INFO = 1,
-    ERROR = 2,
-    NONE = 10,
+enum class LogLevel {
+    Debug = 0,
+    Info = 1,
+    Error = 2,
+    None = 10,
 };
 
 const std::string LOGFILE_PATH = "sdmc:/config/sys-screenuploader/screenuploader.log";
@@ -47,36 +47,36 @@ public:
     }
 
     std::ostream &debug() {
-        if (isEnabled(DEBUG)) {
+        if (isEnabled(LogLevel::Debug)) {
             open();
-            m_file << getPrefix(DEBUG);
+            m_file << getPrefix(LogLevel::Debug);
             return m_file;
         }
         return std::cout;
     }
 
     std::ostream &info() {
-        if (isEnabled(INFO)) {
+        if (isEnabled(LogLevel::Info)) {
             open();
-            m_file << getPrefix(INFO);
+            m_file << getPrefix(LogLevel::Info);
             return m_file;
         }
         return std::cout;
     }
 
     std::ostream &error() {
-        if (isEnabled(ERROR)) {
+        if (isEnabled(LogLevel::Error)) {
             open();
-            m_file << getPrefix(ERROR);
+            m_file << getPrefix(LogLevel::Error);
             return m_file;
         }
         return std::cout;
     }
 
     std::ostream &none() {
-        if (isEnabled(NONE)) {
+        if (isEnabled(LogLevel::None)) {
             open();
-            m_file << getPrefix(NONE);
+            m_file << getPrefix(LogLevel::None);
             return m_file;
         }
         return std::cout;
@@ -95,12 +95,12 @@ private:
     static std::string getPrefix(LogLevel lvl) {
         std::string prefix;
         switch(lvl) {
-            case DEBUG:
+            case LogLevel::Debug:
                 prefix = "[DEBUG] "; break;
-            case INFO:
-                prefix = "[INFO ] "; break;
-            case ERROR:
-                prefix = "[ERROR] "; break;
+            case LogLevel::Info:
+                prefix = "[Info ] "; break;
+            case LogLevel::Error:
+                prefix = "[Error] "; break;
             default:
                 prefix = "[     ] "; break;
         }
@@ -108,5 +108,5 @@ private:
     }
 
     std::ofstream m_file;
-    LogLevel m_level = INFO;
+    LogLevel m_level = LogLevel::Info;
 };
