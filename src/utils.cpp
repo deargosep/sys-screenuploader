@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <ranges>
 
 #include "utils.hpp"
+
+namespace fs = std::filesystem;
 
 std::string getAlbumPath() {
     return "img:/";
@@ -13,6 +16,59 @@ std::string getAlbumPath() {
 
 bool isDigitsOnly(const std::string &str) {
     return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
+std::vector<fs::directory_entry> getAlbumItemsPastDate(int year, int month, int day) {
+    const std::string sYear = std::to_string(year);
+    const std::string sMonth = std::to_string(month);
+    const std::string sDay = std::to_string(day);
+
+    auto valid_year = [](const fs::directory_entry &path) {
+        return path.is_directory() && isDigitsOnly(path.path().filename()) &&
+            path.path().filename().string().length() == 4;
+    };
+
+    auto year_past = [&](const fs::directory_entry &path) {
+        return path.path().filename().string() >= sYear;
+    };
+
+    auto valid_month = [](const fs::directory_entry &path) {
+        return path.is_directory() && isDigitsOnly(path.path().filename()) &&
+            path.path().filename().string().length() == 2;
+    };
+
+    auto month_past = [&](const fs::directory_entry &path) {
+        return path.path().filename().string() >= sMonth;
+    };
+
+    auto valid_day = [](const fs::directory_entry &path) {
+        return path.is_directory() && isDigitsOnly(path.path().filename()) &&
+            path.path().filename().string().length() == 2;
+    };
+
+    auto day_past = [&](const fs::directory_entry &path) {
+        return path.path().filename().string() >= sDay;
+    };
+
+    auto explore_dir = [&](const fs::directory_entry &path) {
+        return fs::directory_iterator(path);
+    };
+
+    auto files = std::views::all(fs::directory_iterator(getAlbumPath())) |
+        std::views::filter(valid_year) | std::views::filter(year_past) |
+        std::views::transform(explore_dir) | std::views::join |
+        std::views::filter(valid_month) | std::views::filter(month_past) |
+        std::views::transform(explore_dir) | std::views::join |
+        std::views::filter(valid_day) | std::views::filter(day_past) |
+        std::views::transform(explore_dir) | std::views::join;
+
+    std::vector<fs::directory_entry> paths {};
+    
+    for (auto file : files) {
+      paths.push_back(file);
+    }
+
+    return paths;
 }
 
 std::string getLastAlbumItem() {
